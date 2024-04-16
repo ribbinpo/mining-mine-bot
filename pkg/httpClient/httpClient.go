@@ -1,31 +1,29 @@
-package httpclient
+package httpClient
 
 import (
-	"fmt"
-	"io"
+	"bytes"
 	"net/http"
 )
 
-func Get(url string) ([]byte, error) {
-	response, err := http.Get(url)
+type Client interface {
+	Get(url string) (*http.Response, error)
+	Post(url string, body []byte) (*http.Response, error)
+}
 
+type DefaultClient struct{}
+
+func (c *DefaultClient) Get(url string) (*http.Response, error) {
+	resp, err := http.Get(url)
 	if err != nil {
-		return nil, fmt.Errorf("error while sending request to %s: %v", url, err)
+		return nil, err
 	}
-	defer response.Body.Close()
+	return resp, nil
+}
 
-	body, err := io.ReadAll(response.Body)
+func (c *DefaultClient) Post(url string, body []byte) (*http.Response, error) {
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
-		return nil, fmt.Errorf("error while reading response body: %v", err)
+		return nil, err
 	}
-
-	// NOTE: Print response body in string format
-	// fmt.Println(string(body))
-
-	// NOTE: Parse []byte to the go struct pointer
-	// if err := json.Unmarshal(body, &result); err != nil {
-	// 	fmt.Println("Can not unmarshal JSON")
-	// }
-
-	return body, nil
+	return resp, nil
 }
