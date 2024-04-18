@@ -1,5 +1,7 @@
 package domain
 
+import "encoding/json"
+
 type Advertiser struct {
 	UserNo             string   `json:"userNo"`
 	RealName           string   `json:"realName"`
@@ -118,6 +120,35 @@ type P2PBinanceResponse struct {
 	Success bool `json:"success"`
 }
 
+type P2PBinanceDataPayload struct {
+	AdditionalKycVerifyFilter int
+	Asset                     string
+	Classifies                []string
+	Countries                 []string
+	Fiat                      string
+	FilterType                string
+	Page                      int
+	PayTypes                  []string
+	ProMerchantAds            bool
+	PublisherType             *string
+	Rows                      int
+	ShieldMerchantAds         bool
+	TradeType                 string
+	TransAmount               int
+}
+
+func (p P2PBinanceDataPayload) Encode() ([]byte, error) {
+	body, err := json.Marshal(p)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
+}
+
 type P2PBinanceRepository interface {
 	GetP2PBinanceData(url string, body []byte) (*P2PBinanceResponse, error)
+}
+
+type P2PBinanceUseCase interface {
+	RecordP2PBinanceData(url string) error
 }
