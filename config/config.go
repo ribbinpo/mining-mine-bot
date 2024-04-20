@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -18,6 +19,10 @@ func NewConfig(pathEnv string) *Config {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	tz, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		log.Fatal("Error loading timezone")
+	}
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 		os.Getenv("DB_HOST"),
@@ -30,7 +35,8 @@ func NewConfig(pathEnv string) *Config {
 
 	return &Config{
 		App: &App{
-			Port: os.Getenv("PORT"),
+			Port:     os.Getenv("PORT"),
+			TimeZone: tz,
 		},
 		Db: &Db{
 			Dsn: dsn,
@@ -40,7 +46,8 @@ func NewConfig(pathEnv string) *Config {
 }
 
 type App struct {
-	Port string
+	Port     string
+	TimeZone *time.Location
 }
 
 type Db struct {
