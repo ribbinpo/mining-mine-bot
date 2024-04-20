@@ -145,10 +145,12 @@ func (p P2PBinanceDataPayload) Encode() ([]byte, error) {
 	return body, nil
 }
 
+// Repository
 type P2PBinanceRepository interface {
 	GetP2PBinanceData(url string, body []byte) (*P2PBinanceResponse, error)
 }
 
+// UseCase
 type P2PBinanceUseCase interface {
 	RecordP2PBinanceData(url string) error
 }
