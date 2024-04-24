@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/ribbinpo/mining-mine-bot/config"
 	"github.com/ribbinpo/mining-mine-bot/domain"
 	"github.com/ribbinpo/mining-mine-bot/pkg/database"
 	"github.com/ribbinpo/mining-mine-bot/pkg/httpClient"
 	"github.com/ribbinpo/mining-mine-bot/repositories"
+	"github.com/ribbinpo/mining-mine-bot/routers"
 	"github.com/ribbinpo/mining-mine-bot/usecases"
 	"github.com/robfig/cron/v3"
 )
@@ -26,13 +28,7 @@ func main() {
 	// Migrate the schema
 	dbClient.AutoMigrate(&domain.PriceToken{})
 
-	// app := fiber.New()
-
-	// app.Get("/health-check", func(c *fiber.Ctx) error {
-	// 	return c.SendString("Hello, World!")
-	// })
-
-	// routers.Route(app, dbClient)
+	app := fiber.New()
 
 	c.AddFunc("@daily", func() {
 		if err := usecases.NewP2PBinanceService(repositories.NewP2PBinanceRepository(client), repositories.NewPriceTokenRepository(dbClient)).RecordP2PBinanceData("https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search"); err != nil {
@@ -43,6 +39,14 @@ func main() {
 
 	c.Start()
 
+	app.Get("/health-check", func(c *fiber.Ctx) error {
+		return c.SendString("Server is running:)")
+	})
+
+	routers.Route(app, dbClient)
+
+	app.Listen(cfg.App.Port)
+
 	// u can remove this line if open fiber
-	select {}
+	// select {}
 }

@@ -8,5 +8,5 @@ import (
 func Route(app *fiber.App, dbClient *gorm.DB) {
 	api := app.Group("/api")
 
-	NewTemplateController(api.Group("/template"), dbClient)
+	NewPriceTokenRouter(api.Group("/price-token"), dbClient)
 }

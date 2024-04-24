@@ -1,6 +1,9 @@
 package domain
 
-import "gorm.io/gorm"
+import (
+	"github.com/ribbinpo/mining-mine-bot/pkg/utils"
+	"gorm.io/gorm"
+)
 
 type PriceToken struct {
 	gorm.Model
@@ -10,6 +13,18 @@ type PriceToken struct {
 	AmountFiatSelected uint    `json:"amount_fiat_selected"`
 }
 
+const (
+	USDT = "USDT"
+	BNB  = "BNB"
+	ETH  = "ETH"
+	BTC  = "BTC"
+)
+
 type PriceTokenRepository interface {
+	GetAll(pagination utils.Pagination, currency string) ([]*PriceToken, error)
 	RecordPriceToken(priceToken []*PriceToken) error
+}
+
+type PriceTokenUsecase interface {
+	GetAll(pagination utils.Pagination, currency string) ([]*PriceToken, error)
 }

@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"github.com/ribbinpo/mining-mine-bot/domain"
+	"github.com/ribbinpo/mining-mine-bot/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -19,4 +20,21 @@ func (p *PriceTokenRepo) RecordPriceToken(priceToken []*domain.PriceToken) error
 		return result.Error
 	}
 	return nil
+}
+
+func (p *PriceTokenRepo) GetAll(pagination utils.Pagination, currency string) ([]*domain.PriceToken, error) {
+	var priceTokens []*domain.PriceToken
+	offset := (pagination.Page - 1) * pagination.PerPage
+	if currency == "" {
+		result := p.DB.Limit(pagination.PerPage).Offset(offset).Find(&priceTokens)
+		if result.Error != nil {
+			return nil, result.Error
+		}
+		return priceTokens, nil
+	}
+	result := p.DB.Where("crypto_currency", currency).Limit(pagination.PerPage).Offset(offset).Find(&priceTokens)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return priceTokens, nil
 }
