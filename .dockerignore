@@ -1,2 +1,6 @@
 # Exclude git history and configuration.
 .gitignore
+tmp/
+.air.toml
+.gitignore
+.git/

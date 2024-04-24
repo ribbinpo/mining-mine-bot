@@ -4,14 +4,14 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.dev
     restart: always
     ports:
       - "${PORT:-4000}:${PORT:-4000}"
     volumes:
       - ./:/app
     env_file:
-      - .env
+      - .env.development
     environment:
       - DB_HOST=db
     depends_on:

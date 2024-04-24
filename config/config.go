@@ -35,7 +35,7 @@ func NewConfig(pathEnv string) *Config {
 
 	return &Config{
 		App: &App{
-			Port:     os.Getenv("PORT"),
+			Port:     ":" + os.Getenv("PORT"),
 			TimeZone: tz,
 		},
 		Db: &Db{
