@@ -25,7 +25,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
       - name: publish image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:${{ github.event.inputs.version }}
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:${{ github.event.inputs.version }}
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:latest
   deploy:
     needs: build_and_publish
     runs-on: ubuntu-latest
