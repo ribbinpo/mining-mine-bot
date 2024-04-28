@@ -1,0 +1,35 @@
+name: self-hosted-db
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pull_image:
+    runs-on: [self-hosted, mining-mine-bot]
+
+    environment: dev
+
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+      - name: docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: run postgres container
+        run: |
+          docker run -d \
+          --name db \
+          -p ${PORT}:${PORT} \
+          -e POSTGRES_USER=${DB_USER} \
+          -e POSTGRES_PASSWORD=${DB_PASSWORD} \
+          -e POSTGRES_DB=${DB_NAME} \
+          -v db-data:/var/lib/postgresql/data \
+          --network mining-mine-network \
+          postgres:16.2-alpine3.19
