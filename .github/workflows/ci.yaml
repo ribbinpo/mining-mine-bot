@@ -1,0 +1,34 @@
+name: cicd
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Enter version to build e.g. (latest, 1.0.0):"
+        required: true
+        default: "latest"
+
+jobs:
+  build_and_publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+      - name: build image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:${{ github.event.inputs.version }} .
+      - name: tag image
+        run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:${{ github.event.inputs.version }} ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:latest
+      - name: docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+      - name: publish image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:${{ github.event.inputs.version }}
+  deploy:
+    needs: build_and_publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo "Deploying to server"
