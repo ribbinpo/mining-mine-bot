@@ -1,4 +1,4 @@
-name: self-hosted-db
+name: self-hosted-db-selfhosted
 
 on:
   workflow_dispatch:
