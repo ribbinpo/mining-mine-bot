@@ -24,13 +24,14 @@ jobs:
           username: ${{ secrets.DIGITALOCEAN_DROPLET_USERNAME }}
           password: ${{ secrets.DIGITALOCEAN_DROPLET_PASSWORD }}
           script: |
-            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-            docker run -d \
-            --name db \
-            -p ${{ secrets.DB_PORT }}:5432 \
-            -e POSTGRES_USER=${{ secrets.DB_USER }} \
-            -e POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e POSTGRES_DB=${{ secrets.DB_NAME }} \
-            -v db-data:/var/lib/postgresql/data \
-            --network mining-mine-network \
-            postgres:16.2-alpine3.19
+            whoami
+            # docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+            # docker run -d \
+            # --name db \
+            # -p ${{ secrets.DB_PORT }}:5432 \
+            # -e POSTGRES_USER=${{ secrets.DB_USER }} \
+            # -e POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            # -e POSTGRES_DB=${{ secrets.DB_NAME }} \
+            # -v db-data:/var/lib/postgresql/data \
+            # --network mining-mine-network \
+            # postgres:16.2-alpine3.19
