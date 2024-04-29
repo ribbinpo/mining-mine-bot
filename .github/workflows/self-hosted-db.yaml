@@ -5,7 +5,7 @@ on:
 
 jobs:
   pull_image:
-    runs-on: [self-hosted, mining-mine-bot]
+    runs-on: ubuntu-latest
 
     environment: dev
 
