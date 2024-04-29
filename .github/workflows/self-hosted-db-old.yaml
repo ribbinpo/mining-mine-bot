@@ -1,0 +1,48 @@
+name: self-hosted-db
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pull_image:
+    runs-on: [self-hosted, mining-mine-bot]
+
+    environment: dev
+
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DIGITALOCEAN_DROPLET_USERNAME: ${{ secrets.DIGITALOCEAN_DROPLET_USERNAME }}
+      DIGITALOCEAN_DROPLET_IP: ${{ secrets.DIGITALOCEAN_DROPLET_IP }}
+      DIGITALOCEAN_DROPLET_PASSWORD: ${{ secrets.DIGITALOCEAN_DROPLET_PASSWORD }}
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+      - name: SSH into DigitalOcean Droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${DIGITALOCEAN_DROPLET_IP}
+          username: ${DIGITALOCEAN_DROPLET_USERNAME}
+          password: ${DIGITALOCEAN_DROPLET_PASSWORD}
+          script: |
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+            cat << EOF > .env
+            PORT=${PORT}
+            DB_HOST=${DB_HOST}
+            DB_USER=${DB_USER}
+            DB_PASSWORD=${DB_PASSWORD}
+            DB_NAME=${DB_NAME}
+            DB_PORT=${DB_PORT}
+            EOF
+            echo ".env is created successfully!"
+            docker run -d \
+            --name db \
+            -p ${PORT}:${PORT} \
+            -e POSTGRES_USER=${DB_USER} \
+            -e POSTGRES_PASSWORD=${DB_PASSWORD} \
+            -e POSTGRES_DB=${DB_NAME} \
+            -v db-data:/var/lib/postgresql/data \
+            --network mining-mine-network \
+            postgres:16.2-alpine3.19

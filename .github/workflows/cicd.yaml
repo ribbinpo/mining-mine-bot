@@ -55,6 +55,7 @@ jobs:
           username: ${DIGITALOCEAN_DROPLET_USERNAME}
           password: ${DIGITALOCEAN_DROPLET_PASSWORD}
           script: |
+            docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
             docker stop mining-mine-bot
             docker rm mining-mine-bot
             cat << EOF > .env
