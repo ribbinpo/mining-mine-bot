@@ -41,9 +41,6 @@ jobs:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
       DB_PORT: ${{ secrets.DB_PORT }}
-      DIGITALOCEAN_DROPLET_USERNAME: ${{ secrets.DIGITALOCEAN_DROPLET_USERNAME }}
-      DIGITALOCEAN_DROPLET_IP: ${{ secrets.DIGITALOCEAN_DROPLET_IP }}
-      DIGITALOCEAN_DROPLET_PASSWORD: ${{ secrets.DIGITALOCEAN_DROPLET_PASSWORD }}
 
     steps:
       - name: checkout branch
@@ -51,9 +48,9 @@ jobs:
       - name: SSH into DigitalOcean Droplet
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${DIGITALOCEAN_DROPLET_IP}
-          username: ${DIGITALOCEAN_DROPLET_USERNAME}
-          password: ${DIGITALOCEAN_DROPLET_PASSWORD}
+          host: ${{ secrets.DIGITALOCEAN_DROPLET_IP }}
+          username: ${{ secrets.DIGITALOCEAN_DROPLET_USERNAME}}
+          password: ${{ secrets.DIGITALOCEAN_DROPLET_PASSWORD }}
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
             docker stop mining-mine-bot || true
