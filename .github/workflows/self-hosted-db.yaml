@@ -27,6 +27,7 @@ jobs:
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
             docker stop db || true
             docker rm db || true
+            docker network create mining-mine-network || true 
             docker run -d \
             --name db \
             -p $DB_PORT:5432 \
