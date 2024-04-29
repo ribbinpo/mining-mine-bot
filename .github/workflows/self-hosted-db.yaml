@@ -25,6 +25,8 @@ jobs:
           password: ${{ secrets.DIGITALOCEAN_DROPLET_PASSWORD }}
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+            docker stop db || true
+            docker rm db || true
             docker run -d \
             --name db \
             -p $DB_PORT:5432 \
