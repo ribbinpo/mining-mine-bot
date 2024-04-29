@@ -63,7 +63,7 @@ jobs:
               --name mining-mine-bot \
               --restart always \
               -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
-              -v .env:/app/.env \
+              -v ./.env:/app/.env \
               --network mining-mine-network \
               --network-alias mining-mine-bot \
               ${{ secrets.DOCKERHUB_USERNAME }}/mining-mine-bot:latest
