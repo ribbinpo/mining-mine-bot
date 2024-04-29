@@ -56,8 +56,9 @@ jobs:
           password: ${DIGITALOCEAN_DROPLET_PASSWORD}
           script: |
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
-            docker stop mining-mine-bot
-            docker rm mining-mine-bot
+            docker stop mining-mine-bot || true
+            docker rm mining-mine-bot || true
+            docker network create mining-mine-network || true 
             cat << EOF > .env
             PORT=${PORT}
             DB_HOST=${DB_HOST}
