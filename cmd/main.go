@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	cfg := config.NewConfig("./.env.development")
+	cfg := config.NewConfig("./.env")
 	client := &httpClient.DefaultClient{}
 
 	c := cron.New(cron.WithLocation(cfg.App.TimeZone))

@@ -9,11 +9,7 @@ services:
     ports:
       - "${PORT:-4000}:${PORT:-4000}"
     volumes:
-      - ./:/app
-    env_file:
-      - .env
-    environment:
-      - DB_HOST=db
+      - .env:/app/.env
     depends_on:
       - db
     networks:
