@@ -30,10 +30,10 @@ jobs:
             docker network create mining-mine-network || true 
             docker run -d \
             --name db \
-            -p $DB_PORT:5432 \
-            -e POSTGRES_USER=$DB_USER \
-            -e POSTGRES_PASSWORD=$DB_PASSWORD \
-            -e POSTGRES_DB=$DB_NAME \
+            -p ${{ secrets.DB_PORT }}:5432 \
+            -e POSTGRES_USER=${{ secrets.DB_USER }} \
+            -e POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e POSTGRES_DB=${{ secrets.DB_NAME }} \
             -v db-data:/var/lib/postgresql/data \
             --network mining-mine-network \
             postgres:16.2-alpine3.19
