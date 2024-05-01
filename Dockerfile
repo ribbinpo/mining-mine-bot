@@ -12,6 +12,8 @@ RUN go build -o main cmd/main.go
 
 FROM debian:buster-slim as runtime
 
+RUN apt-get update && apt-get install -y ca-certificates
+
 WORKDIR /app
 
 COPY --from=build /app/main /bin/main
