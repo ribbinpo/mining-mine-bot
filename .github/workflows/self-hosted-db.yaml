@@ -30,4 +30,5 @@ jobs:
             -e POSTGRES_DB=${{ secrets.DB_NAME }} \
             -v db-data:/var/lib/postgresql/data \
             --network mining-mine-network \
+            --network-alias db \
             postgres:16.2-alpine3.19
