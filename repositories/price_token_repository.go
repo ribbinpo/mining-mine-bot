@@ -15,7 +15,7 @@ func NewPriceTokenRepository(db *gorm.DB) domain.PriceTokenRepository {
 }
 
 func (p *PriceTokenRepo) RecordPriceToken(priceToken []*domain.PriceToken) error {
-	result := p.DB.Create(&priceToken)
+	result := p.DB.Create(priceToken)
 	if result.Error != nil {
 		return result.Error
 	}
