@@ -20,11 +20,16 @@ const (
 	BTC  = "BTC"
 )
 
+type PriceTokenFilter struct {
+	CryptoCurrency string
+	FiatAmounts    int
+}
+
 type PriceTokenRepository interface {
-	GetAll(pagination utils.Pagination, currency string) ([]*PriceToken, error)
+	GetAll(pagination utils.Pagination, filter PriceTokenFilter) ([]*PriceToken, error)
 	RecordPriceToken(priceToken []*PriceToken) error
 }
 
 type PriceTokenUsecase interface {
-	GetAll(pagination utils.Pagination, currency string) ([]*PriceToken, error)
+	GetAll(pagination utils.Pagination, filter PriceTokenFilter) ([]*PriceToken, error)
 }

@@ -22,17 +22,17 @@ func (p *PriceTokenRepo) RecordPriceToken(priceToken []*domain.PriceToken) error
 	return nil
 }
 
-func (p *PriceTokenRepo) GetAll(pagination utils.Pagination, currency string) ([]*domain.PriceToken, error) {
+func (p *PriceTokenRepo) GetAll(pagination utils.Pagination, filter domain.PriceTokenFilter) ([]*domain.PriceToken, error) {
 	var priceTokens []*domain.PriceToken
 	offset := (pagination.Page - 1) * pagination.PerPage
-	if currency == "" {
-		result := p.DB.Limit(pagination.PerPage).Offset(offset).Find(&priceTokens)
-		if result.Error != nil {
-			return nil, result.Error
-		}
-		return priceTokens, nil
+	operate := p.DB
+	if filter.CryptoCurrency != "" {
+		operate = p.DB.Where("crypto_currency", filter.CryptoCurrency)
 	}
-	result := p.DB.Where("crypto_currency", currency).Limit(pagination.PerPage).Offset(offset).Find(&priceTokens)
+	if filter.FiatAmounts != 0 {
+		operate = operate.Where("amount_fiat_selected", filter.FiatAmounts)
+	}
+	result := operate.Limit(pagination.PerPage).Offset(offset).Find(&priceTokens)
 	if result.Error != nil {
 		return nil, result.Error
 	}

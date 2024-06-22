@@ -22,8 +22,11 @@ func (p *PriceTokenController) GetAll(ctx *fiber.Ctx) error {
 	page := ctx.QueryInt("page", 1)
 	limit := ctx.QueryInt("limit", 10)
 	currency := ctx.Query("currency")
+	fiatAmounts := ctx.QueryInt("fiat_amounts", 0)
+	println("Hello11: ", fiatAmounts)
+	filter := domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts}
 	pagination := utils.Pagination{Page: page, PerPage: limit}
-	result, err := p.PriceTokenService.GetAll(pagination, currency)
+	result, err := p.PriceTokenService.GetAll(pagination, filter)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}

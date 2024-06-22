@@ -13,6 +13,6 @@ func NewPriceTokenUseCase(repo domain.PriceTokenRepository) domain.PriceTokenUse
 	return &PriceTokenUseCase{repo: repo}
 }
 
-func (p *PriceTokenUseCase) GetAll(pagination utils.Pagination, currency string) ([]*domain.PriceToken, error) {
-	return p.repo.GetAll(pagination, currency)
+func (p *PriceTokenUseCase) GetAll(pagination utils.Pagination, filter domain.PriceTokenFilter) ([]*domain.PriceToken, error) {
+	return p.repo.GetAll(pagination, filter)
 }
