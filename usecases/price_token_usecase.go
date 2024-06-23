@@ -30,3 +30,11 @@ func (p *PriceTokenUseCase) GetAll(pagination utils.Pagination, filter domain.Pr
 
 	return data, nil
 }
+
+func (p *PriceTokenUseCase) GetPriceTokenDescribe(filter domain.PriceTokenFilter) (*domain.PriceTokenRepositoryDescribe, error) {
+	priceTokenDescribe, err := p.repo.GetPriceTokenDescribe(filter)
+	if err != nil {
+		return nil, err
+	}
+	return priceTokenDescribe, nil
+}

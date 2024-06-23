@@ -35,12 +35,21 @@ type PriceTokenUseCaseGetAllResponse struct {
 	Data         []*PriceToken `json:"data"`
 }
 
+type PriceTokenRepositoryDescribe struct {
+	AvgPrice     float64 `json:"avg_price"`
+	LastestPrice float64 `json:"lastest_price"`
+	MinPrice     float64 `json:"min_price"`
+	MaxPrice     float64 `json:"max_price"`
+}
+
 type PriceTokenRepository interface {
 	GetAll(pagination utils.Pagination, filter PriceTokenFilter) ([]*PriceToken, error)
 	GetAvgPrice(filter PriceTokenFilter) (float64, error)
+	GetPriceTokenDescribe(filter PriceTokenFilter) (*PriceTokenRepositoryDescribe, error)
 	RecordPriceToken(priceToken []*PriceToken) error
 }
 
 type PriceTokenUsecase interface {
 	GetAll(pagination utils.Pagination, filter PriceTokenFilter) (*PriceTokenUseCaseGetAllResponse, error)
+	GetPriceTokenDescribe(filter PriceTokenFilter) (*PriceTokenRepositoryDescribe, error)
 }

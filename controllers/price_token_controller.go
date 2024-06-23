@@ -10,6 +10,7 @@ import (
 
 type IPriceTokenController interface {
 	GetAll(ctx *fiber.Ctx) error
+	GetPriceTokenDescribe(ctx *fiber.Ctx) error
 }
 
 type PriceTokenController struct {
@@ -41,6 +42,18 @@ func (p *PriceTokenController) GetAll(ctx *fiber.Ctx) error {
 	filter := domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts, StartDate: parseStartDate, EndDate: parseEndDate}
 	pagination := utils.Pagination{Page: page, PerPage: limit}
 	result, err := p.PriceTokenService.GetAll(pagination, filter)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+	return ctx.Status(fiber.StatusOK).JSON(result)
+}
+
+func (p *PriceTokenController) GetPriceTokenDescribe(ctx *fiber.Ctx) error {
+	currency := ctx.Query("currency")
+	fiatAmounts := ctx.QueryInt("fiat_amounts", 0)
+
+	filter := domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts}
+	result, err := p.PriceTokenService.GetPriceTokenDescribe(filter)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}

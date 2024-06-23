@@ -13,4 +13,5 @@ func NewPriceTokenRouter(route fiber.Router, dbClient *gorm.DB) {
 	controller := controllers.NewPriceTokenController(usecases.NewPriceTokenUseCase(repositories.NewPriceTokenRepository(dbClient)))
 
 	route.Get("/", controller.GetAll)
+	route.Get("/describe", controller.GetPriceTokenDescribe)
 }

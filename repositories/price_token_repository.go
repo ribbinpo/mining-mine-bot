@@ -47,3 +47,16 @@ func (p *PriceTokenRepo) GetAvgPrice(filter domain.PriceTokenFilter) (float64, e
 	}
 	return avgPrice, nil
 }
+
+func (p *PriceTokenRepo) GetPriceTokenDescribe(filter domain.PriceTokenFilter) (*domain.PriceTokenRepositoryDescribe, error) {
+	var priceTokenDescribe domain.PriceTokenRepositoryDescribe
+	result := p.DB.Table("price_tokens").Select("AVG(price) as avg_price", "MIN(price) as min_price", "MAX(price) as max_price").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Find(&priceTokenDescribe)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	latestPriceResult := p.DB.Table("price_tokens").Select("price").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Order("created_at desc").Limit(1).Find(&priceTokenDescribe.LastestPrice)
+	if latestPriceResult.Error != nil {
+		return nil, latestPriceResult.Error
+	}
+	return &priceTokenDescribe, nil
+}
