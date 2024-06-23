@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"time"
+
 	"github.com/ribbinpo/mining-mine-bot/pkg/utils"
 	"gorm.io/gorm"
 )
@@ -23,13 +25,22 @@ const (
 type PriceTokenFilter struct {
 	CryptoCurrency string
 	FiatAmounts    int
+	StartDate      time.Time
+	EndDate        time.Time
+}
+
+type PriceTokenUseCaseGetAllResponse struct {
+	AvgPrice     float64       `json:"avg_price"`
+	LastestPrice float64       `json:"lastest_price"`
+	Data         []*PriceToken `json:"data"`
 }
 
 type PriceTokenRepository interface {
 	GetAll(pagination utils.Pagination, filter PriceTokenFilter) ([]*PriceToken, error)
+	GetAvgPrice(filter PriceTokenFilter) (float64, error)
 	RecordPriceToken(priceToken []*PriceToken) error
 }
 
 type PriceTokenUsecase interface {
-	GetAll(pagination utils.Pagination, filter PriceTokenFilter) ([]*PriceToken, error)
+	GetAll(pagination utils.Pagination, filter PriceTokenFilter) (*PriceTokenUseCaseGetAllResponse, error)
 }

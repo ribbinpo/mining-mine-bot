@@ -13,6 +13,20 @@ func NewPriceTokenUseCase(repo domain.PriceTokenRepository) domain.PriceTokenUse
 	return &PriceTokenUseCase{repo: repo}
 }
 
-func (p *PriceTokenUseCase) GetAll(pagination utils.Pagination, filter domain.PriceTokenFilter) ([]*domain.PriceToken, error) {
-	return p.repo.GetAll(pagination, filter)
+func (p *PriceTokenUseCase) GetAll(pagination utils.Pagination, filter domain.PriceTokenFilter) (*domain.PriceTokenUseCaseGetAllResponse, error) {
+	priceList, err := p.repo.GetAll(pagination, filter)
+	if err != nil {
+		return nil, err
+	}
+	avgPrice, err := p.repo.GetAvgPrice(filter)
+	if err != nil {
+		return nil, err
+	}
+	data := &domain.PriceTokenUseCaseGetAllResponse{
+		AvgPrice:     avgPrice,
+		LastestPrice: priceList[len(priceList)-1].Price,
+		Data:         priceList,
+	}
+
+	return data, nil
 }

@@ -24,7 +24,7 @@ func (p *PriceTokenRepo) RecordPriceToken(priceToken []*domain.PriceToken) error
 
 func (p *PriceTokenRepo) GetAll(pagination utils.Pagination, filter domain.PriceTokenFilter) ([]*domain.PriceToken, error) {
 	var priceTokens []*domain.PriceToken
-	offset := (pagination.Page - 1) * pagination.PerPage
+	// offset := (pagination.Page - 1) * pagination.PerPage
 	operate := p.DB
 	if filter.CryptoCurrency != "" {
 		operate = p.DB.Where("crypto_currency", filter.CryptoCurrency)
@@ -32,9 +32,18 @@ func (p *PriceTokenRepo) GetAll(pagination utils.Pagination, filter domain.Price
 	if filter.FiatAmounts != 0 {
 		operate = operate.Where("amount_fiat_selected", filter.FiatAmounts)
 	}
-	result := operate.Limit(pagination.PerPage).Offset(offset).Find(&priceTokens)
+	result := operate.Where("created_at between ? AND ?", filter.StartDate, filter.EndDate).Find(&priceTokens)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return priceTokens, nil
+}
+
+func (p *PriceTokenRepo) GetAvgPrice(filter domain.PriceTokenFilter) (float64, error) {
+	var avgPrice float64
+	result := p.DB.Table("price_tokens").Select("AVG(price)").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Where("created_at between ? AND ?", filter.StartDate, filter.EndDate).Find(&avgPrice)
+	if result.Error != nil {
+		return 0, result.Error
+	}
+	return avgPrice, nil
 }
