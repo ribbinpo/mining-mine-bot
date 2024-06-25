@@ -60,3 +60,12 @@ func (p *PriceTokenRepo) GetPriceTokenDescribe(filter domain.PriceTokenFilter) (
 	}
 	return &priceTokenDescribe, nil
 }
+
+func (p *PriceTokenRepo) GetPriceTokenLastest(filter domain.PriceTokenFilter) (*domain.PriceToken, error) {
+	var priceToken domain.PriceToken
+	result := p.DB.Table("price_tokens").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Order("created_at desc").Limit(1).Find(&priceToken)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &priceToken, nil
+}

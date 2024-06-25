@@ -38,3 +38,23 @@ func (p *PriceTokenUseCase) GetPriceTokenDescribe(filter domain.PriceTokenFilter
 	}
 	return priceTokenDescribe, nil
 }
+
+func (p *PriceTokenUseCase) GetDiffPrice(filter domain.PriceTokenUseCaseGetDiffPriceFilter) (float64, error) {
+	filter1 := domain.PriceTokenFilter{
+		CryptoCurrency: filter.CryptoCurrency1,
+		FiatAmounts:    filter.FiatAmounts,
+	}
+	filter2 := domain.PriceTokenFilter{
+		CryptoCurrency: filter.CryptoCurrency2,
+		FiatAmounts:    filter.FiatAmounts,
+	}
+	token1, err := p.repo.GetPriceTokenLastest(filter1)
+	if err != nil {
+		return 0, err
+	}
+	token2, err := p.repo.GetPriceTokenLastest(filter2)
+	if err != nil {
+		return 0, err
+	}
+	return token1.Price - token2.Price, nil
+}

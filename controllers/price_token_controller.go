@@ -11,6 +11,7 @@ import (
 type IPriceTokenController interface {
 	GetAll(ctx *fiber.Ctx) error
 	GetPriceTokenDescribe(ctx *fiber.Ctx) error
+	GetPriceDiff(ctx *fiber.Ctx) error
 }
 
 type PriceTokenController struct {
@@ -54,6 +55,19 @@ func (p *PriceTokenController) GetPriceTokenDescribe(ctx *fiber.Ctx) error {
 
 	filter := domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts}
 	result, err := p.PriceTokenService.GetPriceTokenDescribe(filter)
+	if err != nil {
+		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+	return ctx.Status(fiber.StatusOK).JSON(result)
+}
+
+func (p *PriceTokenController) GetPriceDiff(ctx *fiber.Ctx) error {
+	currency1 := ctx.Query("currency1")
+	currency2 := ctx.Query("currency2")
+	fiatAmounts := ctx.QueryInt("fiat_amounts", 0)
+
+	filter := domain.PriceTokenUseCaseGetDiffPriceFilter{CryptoCurrency1: currency1, CryptoCurrency2: currency2, FiatAmounts: fiatAmounts}
+	result, err := p.PriceTokenService.GetDiffPrice(filter)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}

@@ -14,4 +14,5 @@ func NewPriceTokenRouter(route fiber.Router, dbClient *gorm.DB) {
 
 	route.Get("/", controller.GetAll)
 	route.Get("/describe", controller.GetPriceTokenDescribe)
+	// route.Get("/diff", controller.GetPriceDiff)
 }

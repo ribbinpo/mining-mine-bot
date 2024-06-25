@@ -42,14 +42,22 @@ type PriceTokenRepositoryDescribe struct {
 	MaxPrice     float64 `json:"max_price"`
 }
 
+type PriceTokenUseCaseGetDiffPriceFilter struct {
+	CryptoCurrency1 string
+	CryptoCurrency2 string
+	FiatAmounts     int
+}
+
 type PriceTokenRepository interface {
 	GetAll(pagination utils.Pagination, filter PriceTokenFilter) ([]*PriceToken, error)
 	GetAvgPrice(filter PriceTokenFilter) (float64, error)
 	GetPriceTokenDescribe(filter PriceTokenFilter) (*PriceTokenRepositoryDescribe, error)
+	GetPriceTokenLastest(filter PriceTokenFilter) (*PriceToken, error)
 	RecordPriceToken(priceToken []*PriceToken) error
 }
 
 type PriceTokenUsecase interface {
 	GetAll(pagination utils.Pagination, filter PriceTokenFilter) (*PriceTokenUseCaseGetAllResponse, error)
 	GetPriceTokenDescribe(filter PriceTokenFilter) (*PriceTokenRepositoryDescribe, error)
+	GetDiffPrice(filter PriceTokenUseCaseGetDiffPriceFilter) (float64, error)
 }
