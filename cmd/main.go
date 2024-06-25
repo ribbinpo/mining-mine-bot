@@ -31,7 +31,11 @@ func main() {
 	app := fiber.New()
 
 	c.AddFunc("@daily", func() {
-		if err := usecases.NewP2PBinanceService(repositories.NewP2PBinanceRepository(client), repositories.NewPriceTokenRepository(dbClient)).RecordP2PBinanceData("https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search"); err != nil {
+		p2pBinanceUsecase := usecases.NewP2PBinanceService(repositories.NewP2PBinanceRepository(client), repositories.NewPriceTokenRepository(dbClient), "https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search")
+		if err := p2pBinanceUsecase.RecordP2PBinanceDataForBuy(); err != nil {
+			panic(err)
+		}
+		if err := p2pBinanceUsecase.RecordP2PBinanceDataForSell(); err != nil {
 			panic(err)
 		}
 		fmt.Println("Cron job executed")

@@ -18,13 +18,13 @@ func (p *PriceTokenUseCase) GetAll(pagination utils.Pagination, filter domain.Pr
 	if err != nil {
 		return nil, err
 	}
-	avgPrice, err := p.repo.GetAvgPrice(filter)
+	priceTokenDescribe, err := p.repo.GetPriceTokenDescribe(filter)
 	if err != nil {
 		return nil, err
 	}
 	data := &domain.PriceTokenUseCaseGetAllResponse{
-		AvgPrice:     avgPrice,
-		LastestPrice: priceList[len(priceList)-1].Price,
+		AvgPrice:     priceTokenDescribe.AvgPrice,
+		LastestPrice: priceTokenDescribe.LastestPrice,
 		Data:         priceList,
 	}
 

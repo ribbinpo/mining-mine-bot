@@ -1,6 +1,8 @@
 package repositories
 
 import (
+	"time"
+
 	"github.com/ribbinpo/mining-mine-bot/domain"
 	"github.com/ribbinpo/mining-mine-bot/pkg/utils"
 	"gorm.io/gorm"
@@ -32,29 +34,23 @@ func (p *PriceTokenRepo) GetAll(pagination utils.Pagination, filter domain.Price
 	if filter.FiatAmounts != 0 {
 		operate = operate.Where("amount_fiat_selected", filter.FiatAmounts)
 	}
-	result := operate.Where("created_at between ? AND ?", filter.StartDate, filter.EndDate).Find(&priceTokens)
+	if (filter.StartDate != time.Time{} && filter.EndDate != time.Time{}) {
+		operate = operate.Where("created_at between ? AND ?", filter.StartDate, filter.EndDate)
+	}
+	result := operate.Find(&priceTokens)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 	return priceTokens, nil
 }
 
-func (p *PriceTokenRepo) GetAvgPrice(filter domain.PriceTokenFilter) (float64, error) {
-	var avgPrice float64
-	result := p.DB.Table("price_tokens").Select("AVG(price)").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Where("created_at between ? AND ?", filter.StartDate, filter.EndDate).Find(&avgPrice)
-	if result.Error != nil {
-		return 0, result.Error
-	}
-	return avgPrice, nil
-}
-
 func (p *PriceTokenRepo) GetPriceTokenDescribe(filter domain.PriceTokenFilter) (*domain.PriceTokenRepositoryDescribe, error) {
 	var priceTokenDescribe domain.PriceTokenRepositoryDescribe
-	result := p.DB.Table("price_tokens").Select("AVG(price) as avg_price", "MIN(price) as min_price", "MAX(price) as max_price").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Find(&priceTokenDescribe)
+	result := p.DB.Table("price_tokens").Select("AVG(price) as avg_price", "MIN(price) as min_price", "MAX(price) as max_price").Where("type", filter.OrderType).Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Find(&priceTokenDescribe)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	latestPriceResult := p.DB.Table("price_tokens").Select("price").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Order("created_at desc").Limit(1).Find(&priceTokenDescribe.LastestPrice)
+	latestPriceResult := p.DB.Table("price_tokens").Select("price").Where("type", filter.OrderType).Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Order("created_at desc").Limit(1).Find(&priceTokenDescribe.LastestPrice)
 	if latestPriceResult.Error != nil {
 		return nil, latestPriceResult.Error
 	}
@@ -63,7 +59,7 @@ func (p *PriceTokenRepo) GetPriceTokenDescribe(filter domain.PriceTokenFilter) (
 
 func (p *PriceTokenRepo) GetPriceTokenLastest(filter domain.PriceTokenFilter) (*domain.PriceToken, error) {
 	var priceToken domain.PriceToken
-	result := p.DB.Table("price_tokens").Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Order("created_at desc").Limit(1).Find(&priceToken)
+	result := p.DB.Table("price_tokens").Where("type", filter.OrderType).Where("crypto_currency = ?", filter.CryptoCurrency).Where("amount_fiat_selected", filter.FiatAmounts).Order("created_at desc").Limit(1).Find(&priceToken)
 	if result.Error != nil {
 		return nil, result.Error
 	}

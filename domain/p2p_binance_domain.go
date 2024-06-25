@@ -152,5 +152,6 @@ type P2PBinanceRepository interface {
 
 // UseCase
 type P2PBinanceUseCase interface {
-	RecordP2PBinanceData(url string) error
+	RecordP2PBinanceDataForBuy() error
+	RecordP2PBinanceDataForSell() error
 }

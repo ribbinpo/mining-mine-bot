@@ -13,6 +13,7 @@ type PriceToken struct {
 	CryptoCurrency     string  `json:"crypto_currency"`
 	FiatCurrency       string  `json:"fiat_currency"`
 	AmountFiatSelected uint    `json:"amount_fiat_selected"`
+	Type               string  `json:"type"`
 }
 
 const (
@@ -27,6 +28,7 @@ type PriceTokenFilter struct {
 	FiatAmounts    int
 	StartDate      time.Time
 	EndDate        time.Time
+	OrderType      string
 }
 
 type PriceTokenUseCaseGetAllResponse struct {
@@ -50,7 +52,6 @@ type PriceTokenUseCaseGetDiffPriceFilter struct {
 
 type PriceTokenRepository interface {
 	GetAll(pagination utils.Pagination, filter PriceTokenFilter) ([]*PriceToken, error)
-	GetAvgPrice(filter PriceTokenFilter) (float64, error)
 	GetPriceTokenDescribe(filter PriceTokenFilter) (*PriceTokenRepositoryDescribe, error)
 	GetPriceTokenLastest(filter PriceTokenFilter) (*PriceToken, error)
 	RecordPriceToken(priceToken []*PriceToken) error

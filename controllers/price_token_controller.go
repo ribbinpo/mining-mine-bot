@@ -29,19 +29,25 @@ func (p *PriceTokenController) GetAll(ctx *fiber.Ctx) error {
 	fiatAmounts := ctx.QueryInt("fiat_amounts", 0)
 	startDate := ctx.Query("start_date")
 	endDate := ctx.Query("end_date")
+	orderType := ctx.Query("type")
 
-	// layout := "Jan _2 15:04:05"
-	parseStartDate, err := time.Parse(time.RFC3339, startDate)
-	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
-	}
-	parseEndDate, err := time.Parse(time.RFC3339, endDate)
-	if err != nil {
-		return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
-	}
-
-	filter := domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts, StartDate: parseStartDate, EndDate: parseEndDate}
+	var filter domain.PriceTokenFilter
 	pagination := utils.Pagination{Page: page, PerPage: limit}
+	if startDate == "" || endDate == "" {
+		filter = domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts, OrderType: orderType}
+	} else {
+		// layout := "Jan _2 15:04:05"
+		parseStartDate, err := time.Parse(time.RFC3339, startDate)
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
+		}
+		parseEndDate, err := time.Parse(time.RFC3339, endDate)
+		if err != nil {
+			return ctx.Status(fiber.StatusBadRequest).SendString(err.Error())
+		}
+		filter = domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts, StartDate: parseStartDate, EndDate: parseEndDate, OrderType: orderType}
+	}
+
 	result, err := p.PriceTokenService.GetAll(pagination, filter)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
@@ -52,8 +58,9 @@ func (p *PriceTokenController) GetAll(ctx *fiber.Ctx) error {
 func (p *PriceTokenController) GetPriceTokenDescribe(ctx *fiber.Ctx) error {
 	currency := ctx.Query("currency")
 	fiatAmounts := ctx.QueryInt("fiat_amounts", 0)
+	orderType := ctx.Query("type")
 
-	filter := domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts}
+	filter := domain.PriceTokenFilter{CryptoCurrency: currency, FiatAmounts: fiatAmounts, OrderType: orderType}
 	result, err := p.PriceTokenService.GetPriceTokenDescribe(filter)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).SendString(err.Error())
