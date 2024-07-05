@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/ribbinpo/mining-mine-bot/config"
 	"github.com/ribbinpo/mining-mine-bot/domain"
 	"github.com/ribbinpo/mining-mine-bot/pkg/database"
@@ -29,6 +30,7 @@ func main() {
 	dbClient.AutoMigrate(&domain.PriceToken{})
 
 	app := fiber.New()
+	app.Use(cors.New())
 
 	c.AddFunc("@daily", func() {
 		p2pBinanceUsecase := usecases.NewP2PBinanceService(repositories.NewP2PBinanceRepository(client), repositories.NewPriceTokenRepository(dbClient), "https://p2p.binance.com/bapi/c2c/v2/friendly/c2c/adv/search")
